@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hcl.project.exception.ResourceNotFoundException;
 import com.hcl.project.model.Project;
 import com.hcl.project.service.ProjectService;
 
@@ -24,13 +23,15 @@ public class ProjectController {
         return ResponseEntity.ok().body(projectService.getAllProjects());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getProjectById(@PathVariable int id) {
-        try {
-            Project project = projectService.getProjectById(id);
-            return ResponseEntity.ok().body(project);
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    public ResponseEntity<?> getProjectById(@PathVariable(value = "id") int projectId) {
+        // check if id is not valid
+        if (projectId <= 0) {
+            return ResponseEntity.badRequest().body("Invalid project id");
         }
-
+        Project project = projectService.getProjectById(projectId);
+        if (project == null) {
+            return ResponseEntity.ok().body("Project with id " + projectId + " not found");
+        }
+        return ResponseEntity.ok().body(project);
+    }
 }
