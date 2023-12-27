@@ -29,7 +29,6 @@ public class ProjectController {
             return ResponseEntity.badRequest().body("Invalid project id");
         }
         Project project = projectService.getProjectById(projectId);
-        // check if project is null
         if (project == null) {
             return ResponseEntity.badRequest().body("Project with id " + projectId + " not found");
         }
